@@ -1,0 +1,50 @@
+{
+  "purpose": "非商業美術課程中的食物造型觀察與畫法說明；插圖內嵌於教材，不提供獨立素材下載",
+  "checked_on": "2026-10-22",
+  "sources": [
+    {
+      "key": "negima",
+      "name": "蔥段肉串",
+      "page": "https://illust8.com/contents/16123",
+      "url": "https://illust8.com/wp-content/uploads/2022/03/yakitori_nagima_16123.png",
+      "width": 780,
+      "height": 600,
+      "author": "イラストエイト",
+      "terms": "https://illust8.com/policy",
+      "sha256": "d1c21e5f359da6545000cfa40d89dcdc856668c739b9275f630abb2f821aeb6d"
+    },
+    {
+      "key": "chicken",
+      "name": "雞肉串",
+      "page": "https://illust8.com/contents/16124",
+      "url": "https://illust8.com/wp-content/uploads/2022/03/yakitori_momo_16124.png",
+      "width": 780,
+      "height": 600,
+      "author": "イラストエイト",
+      "terms": "https://illust8.com/policy",
+      "sha256": "7b38b239820f8dceade5c0ef5830a81bec6ff4650106c2327afe4685df3c1bb7"
+    },
+    {
+      "key": "frank",
+      "name": "香腸",
+      "page": "https://illust8.com/contents/20919",
+      "url": "https://illust8.com/wp-content/uploads/2024/11/food_frankfurt_20919.png",
+      "width": 740,
+      "height": 780,
+      "author": "イラストエイト",
+      "terms": "https://illust8.com/policy",
+      "sha256": "47c8ea7a6661ff9fff22368857c723a08a2f823ed3c3820b9b2cbfdedf606516"
+    },
+    {
+      "key": "shrimp",
+      "name": "蝦子",
+      "page": "https://illust8.com/contents/10205",
+      "url": "https://illust8.com/wp-content/uploads/2020/07/cute_ebi_shrimp_10205.png",
+      "width": 720,
+      "height": 780,
+      "author": "イラストエイト",
+      "terms": "https://illust8.com/policy",
+      "sha256": "e32fadf3e1db81ba5d48785fa91092d4127e3556cb45dd425242108dcae5a046"
+    }
+  ]
+}
