@@ -1971,7 +1971,7 @@ function jumpSection(dir){
 $$('section').forEach(sec => {
   if(!sec.querySelector('.viewer, .stepper, #poses, #checks')) return;
   let b = sec.querySelector(':scope > .reset');
-  if(!b){ b = document.createElement('button'); b.className = 'reset'; b.textContent = '↺ 重來'; b.title = '回到一開始（快捷鍵 R）'; sec.prepend(b); }
+  if(!b){ b = document.createElement('button'); b.className = 'reset'; b.textContent = '↺'; b.setAttribute('aria-label','重來'); b.title = '回到一開始（快捷鍵 R）'; sec.prepend(b); }
   b.onclick = () => resetSection(sec);
 });
 addEventListener('DOMContentLoaded', () => { const t = document.getElementById('cwToast'); if(t && !t._timer) t.remove(); });
