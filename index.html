@@ -1447,22 +1447,84 @@ function stepper(root, steps, onStep){
   };
 })();
 
-/* ---------- 3 先畫什麼（在原畫上框出順序） ---------- */
+/* ---------- 3 依物件顯示原有黑線描邊 ---------- */
 (()=>{
-  const root = $('#orderPic'), svg = $('svg',root);
-  const REG = [[30,45,42,47],[5,14,89,84],[3,3,58,34],[60,0,39,98]];
-  svg.innerHTML = REG.map((r,i)=>`<g class="layer" data-s="${i+1}"><rect x="${r[0]}" y="${r[1]}" width="${r[2]}" height="${r[3]}" fill="none" stroke="#dc5e1b" stroke-width="5" vector-effect="non-scaling-stroke" rx="2"/></g>`).join('');
+  const root = $('#orderPic'), svg = $('svg',root), original = $('#orderImg').src;
+  // 依同一張草稿的可見輪廓分區；人手與前景人物保留原本的遮擋關係。
+  const people = [
+    'M176 348 Q162 307 184 273 Q207 238 245 240 Q284 237 303 271 Q332 309 306 350 L290 416 Q251 409 218 379 L190 360 Z',
+    'M175 350 L151 378 L122 415 L69 495 L61 529 L145 548 L195 557 L231 549 L258 537 L329 536 L330 498 L277 501 L249 487 L226 466 L269 483 L329 488 L330 451 L280 450 L256 424 L220 390 L197 376 Z',
+    'M328 452 Q346 446 365 449 L388 454 L405 465 L408 479 L401 490 L374 481 L360 487 L329 485 Z',
+    'M329 499 L360 497 L383 492 L401 499 L409 511 L404 522 L390 529 L369 523 L356 536 L329 536 Z',
+    'M65 522 Q109 540 151 538 L222 528 Q254 532 258 551 L242 594 L222 643 L207 669 L227 688 Q244 711 224 725 Q203 739 172 723 L153 706 L165 675 L191 620 L201 586 L157 591 Q105 615 66 597 L58 574 Z',
+    'M155 588 L196 588 L175 630 L147 662 L113 681 L107 699 Q95 714 67 708 L40 700 L45 681 L68 668 L106 651 L142 612 Z',
+    'M314 447 L308 410 L311 391 L322 367 L326 354 Q312 336 316 308 Q317 277 342 272 Q379 260 401 275 Q417 287 411 310 L421 355 L422 372 L443 392 L449 412 L410 429 L399 410 L384 400 L374 408 L351 422 L335 447 Z',
+    'M407 194 Q400 150 430 119 Q457 99 490 105 Q518 102 528 134 L536 171 L550 192 Q603 192 625 229 L651 278 L674 355 L606 364 L569 383 L537 398 L505 406 L469 421 L443 414 L428 389 L416 356 L405 333 L419 315 L418 294 L406 278 L401 260 L413 243 L420 234 L414 213 Z',
+    'M720 327 Q707 285 730 248 Q758 215 800 224 Q845 218 861 252 Q874 281 866 322 L854 339 L852 370 Q844 405 816 415 Q786 416 759 396 Q733 378 729 355 Z',
+    'M789 408 L791 430 Q822 455 854 427 L851 390 Z',
+    'M791 430 L763 449 L746 462 L764 491 L784 480 L796 518 L773 550 L829 575 L827 603 Q865 606 910 585 L907 547 L899 476 Q887 442 854 429 Q824 451 791 430 Z',
+    'M746 465 L727 486 L700 475 L665 449 L646 432 L635 427 L621 424 L605 424 L601 431 L605 442 L614 451 L631 466 L658 481 L697 512 L728 532 L748 519 L783 480 L765 462 Z',
+    'M795 516 L773 532 L748 548 L721 543 L690 527 L667 509 L651 500 L644 502 L642 509 L638 509 L638 516 L635 517 L638 530 L647 540 L677 558 L717 579 L741 592 L756 589 L793 558 L809 539 Z',
+    'M775 552 L829 574 L826 605 L865 618 L848 645 L880 686 Q901 702 895 720 L871 738 L825 736 L788 747 L772 731 L785 711 L820 698 L821 678 L789 642 L755 616 L728 587 L741 574 Z',
+    'M461 622 L458 609 L460 600 L465 598 L471 607 L470 598 L475 594 L481 605 L483 597 L488 599 L491 610 L496 607 L500 613 L498 629 L515 661 L550 675 L563 670 L562 643 Q554 606 587 592 Q623 577 650 596 Q680 618 676 659 L669 681 L681 699 L708 713 L722 747 L489 747 L488 716 L479 691 L475 664 Z'
+  ];
+  const visibleHands = [people[2],people[3],people[11],people[12],people[14]];
+  const grill = 'M319 449 L652 347 L752 577 L705 601 L731 673 L715 683 L678 621 L393 715 L382 747 L363 747 L369 715 L331 709 L275 671 L249 548 L277 535 L304 531 Z';
+  const table = 'M34 263 L188 49 L617 78 L605 348 L565 364 L579 280 L49 282 L50 449 L34 456 Z';
+  const bench = 'M29 547 L161 547 L154 601 L24 615 L20 696 L7 701 L10 614 L2 602 Z';
+  const props = ['M0 0 H205 L185 54 L153 119 L90 238 L54 344 L44 453 L0 478 Z','M895 192 H1000 V747 H844 L846 672 L869 592 L872 501 L890 412 Z'];
+  const shapes = (paths,fill='white',padding=fill==='black'?16:0) => paths.map(d=>`<path d="${d}" fill="${fill}" stroke="${fill}" stroke-width="${padding}" stroke-linejoin="round"/>`).join('');
+  const mask = (name,body) => `<mask id="order-${name}" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="747" style="mask-type:luminance"><rect width="1000" height="747" fill="black"/>${body}</mask>`;
+  const ink = CHILD_ART['材料順序-02-奇異筆描邊'];
+  svg.setAttribute('viewBox','0 0 1000 747');
+  svg.setAttribute('preserveAspectRatio','xMidYMid meet');
+  svg.style.mixBlendMode = 'multiply';
+  svg.innerHTML = `<defs>
+    <filter id="order-paper" color-interpolation-filters="sRGB"><feComponentTransfer>
+      <feFuncR type="linear" slope="1.6" intercept="-.35"/><feFuncG type="linear" slope="1.6" intercept="-.35"/><feFuncB type="linear" slope="1.6" intercept="-.35"/>
+    </feComponentTransfer></filter>
+    <filter id="order-props" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/><feComponentTransfer>
+      <feFuncR type="linear" slope="10" intercept="-7.5"/><feFuncG type="linear" slope="10" intercept="-7.5"/><feFuncB type="linear" slope="10" intercept="-7.5"/>
+    </feComponentTransfer></filter>
+    <filter id="order-pencil" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feColorMatrix type="saturate" values="0" result="gray"/>
+      <feGaussianBlur in="gray" stdDeviation=".45" result="smooth"/>
+      <feGaussianBlur in="gray" stdDeviation="3" result="paper"/>
+      <feComposite in="smooth" in2="paper" operator="arithmetic" k2="14" k3="-14" k4="1"/>
+      <feComponentTransfer><feFuncR type="linear" slope="3" intercept="-1.6"/><feFuncG type="linear" slope="3" intercept="-1.6"/><feFuncB type="linear" slope="3" intercept="-1.6"/></feComponentTransfer>
+    </filter>
+    ${mask('plates','<ellipse cx="235" cy="104" rx="65" ry="43" fill="white"/><ellipse cx="134" cy="211" rx="64" ry="53" fill="white"/><path d="M324 67 L468 75 L442 151 L283 147 Z" fill="white"/>'+shapes(people,'black'))}
+    ${mask('moon','<circle cx="711" cy="61" r="38" fill="white"/>')}
+    ${mask('grill',shapes([grill])+shapes(people,'black'))}
+    ${mask('people',shapes(people,'white',4)+'<path d="M181 266 H204 V278 H181 Z M171 280 H202 V293 H171 Z M587 194 H601 V214 H587 Z M602 206 H617 V225 H602 Z" fill="black"/>'+`<path d="${grill}" fill="black" stroke="black" stroke-width="10"/>`+shapes(visibleHands,'white',6))}
+    ${mask('table',shapes([table,bench],'white',12)+shapes(people,'black'))}
+    ${mask('stories',shapes(props)+'<circle cx="711" cy="61" r="44" fill="white"/>'+shapes([table,bench],'black',0)+shapes(people,'black'))}
+  </defs>` + ['grill','people','table','stories'].map((name,i)=>`<g class="layer" data-s="${i+1}" style="mix-blend-mode:multiply"><image href="${i===3?original:ink}" width="1000" height="747" filter="url(#order-${i===3?'props':'paper'})" mask="url(#order-${name})"/></g>`).join('')
+    + `<g class="layer" data-s="2" fill="none" stroke="#161616" stroke-width="2.2" stroke-linecap="round"><path d="M175 345 C170 316 183 280 207 258 M555 194 C586 197 608 210 624 230"/></g>`
+    + `<g class="layer" data-s="3" mask="url(#order-plates)" fill="none" stroke="#161616" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M176 102 C175 80 203 64 235 65 C269 64 297 80 297 102 C297 125 269 141 235 141 C204 142 177 126 176 102 Z M187 103 C188 85 208 75 236 75 C264 75 286 86 286 104 C285 122 263 132 235 132 C208 132 188 121 187 103 Z"/>
+      <path d="M75 209 C76 184 101 165 132 165 C165 165 191 184 192 209 C192 236 165 256 133 255 C103 256 76 235 75 209 Z M86 210 C86 189 107 175 133 175 C160 175 181 191 181 211 C180 233 158 247 132 246 C107 247 87 231 86 210 Z"/>
+      <path d="M329 71 L462 80 L440 146 L290 143 Z M334 79 L451 87 L434 137 L301 135 Z"/>
+    </g><g class="layer" data-s="4" style="mix-blend-mode:multiply"><image href="${original}" width="1000" height="747" filter="url(#order-pencil)" mask="url(#order-moon)"/></g>`;
   let currentOrder = 0;
   stepper(root, CFG.steppers.orderPic, n => {
     currentOrder = n - 1;
+    $('#orderImg').alt = '中秋烤肉草稿：'+['烤肉架','人物','桌子','背景小故事'][currentOrder]+'黑線示範';
+    $$('.steps button',root).forEach((button,i)=>button.setAttribute('aria-pressed',String(i===currentOrder)));
     $$('.layer',svg).forEach(g => g.style.opacity = +g.dataset.s === n ? 1 : 0);
   });
   $$('.steps button',root).forEach((b,i)=>{
     b.textContent = ['1 烤肉架','2 人物','3 桌子','4 小故事'][i];
   });
   $('.pic', root).onclick = () => {
-    const step = CFG.steppers.orderPic[currentOrder];
-    openSimpleLB($('#orderImg').src, step.t, step.d);
+    const full = svg.cloneNode(true);
+    full.setAttribute('xmlns','http://www.w3.org/2000/svg');
+    full.setAttribute('width','1000');full.setAttribute('height','747');
+    full.removeAttribute('style');
+    const base = document.createElementNS('http://www.w3.org/2000/svg','image');
+    base.setAttribute('href',original);base.setAttribute('width','1000');base.setAttribute('height','747');
+    full.insertBefore(base,full.firstChild);
+    openSimpleLB('data:image/svg+xml;charset=utf-8,'+encodeURIComponent(new XMLSerializer().serializeToString(full)),CFG.steppers.orderPic[currentOrder].t);
   };
 })();
 
